@@ -1,5 +1,7 @@
 package products
 
+import "errors"
+
 type Repository interface {
 	GetAllBySeller(sellerID string) ([]Product, error)
 }
@@ -18,5 +20,14 @@ func (r *repository) GetAllBySeller(sellerID string) ([]Product, error) {
 		Description: "generic product",
 		Price:       123.55,
 	})
-	return prodList, nil
+	var response []Product
+	for i, product := range prodList {
+		if product.SellerID == sellerID {
+			response = append(response, prodList[i])
+		}
+	}
+	if len(response) == 0 {
+		return nil, errors.New("Error en el repositorio")
+	}
+	return response, nil
 }
